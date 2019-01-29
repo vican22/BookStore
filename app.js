@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const sequilize = require("./util/database");
 const Product = require("./models/product");
 const User = require("./models/user");
+const Cart = require("./models/cart");
+const CartItem = require("./models/cart-item");
 
 const errorController = require("./controllers/error");
 
@@ -36,8 +38,13 @@ app.use(errorController.get404);
 //User created this product not purchased it
 Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
 User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
 
 sequilize
+  //.sync({ force: true })
   .sync()
   .then(result => {
     //console.log(result);
@@ -50,7 +57,10 @@ sequilize
     return Promise.resolve(user);
   })
   .then(user => {
+    return user.createCart();
     //console.log(user);
+  })
+  .then(cart => {
     app.listen(3000);
   })
   .catch(err => console.log(err));
