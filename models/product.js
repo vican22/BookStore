@@ -15,14 +15,13 @@ class Product {
     const db = getDb();
     let dbOp;
     if (this._id) {
-      //Update product
+      // Update the product
       dbOp = db
         .collection("products")
-        .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this });
+        .updateOne({ _id: this._id }, { $set: this });
     } else {
       dbOp = db.collection("products").insertOne(this);
     }
-
     return dbOp
       .then(result => {
         console.log(result);
@@ -51,7 +50,7 @@ class Product {
     const db = getDb();
     return db
       .collection("products")
-      .find({ _id: new mongodb.ObjectID(prodId) })
+      .find({ _id: new mongodb.ObjectId(prodId) })
       .next()
       .then(product => {
         console.log(product);
@@ -68,7 +67,7 @@ class Product {
       .collection("products")
       .deleteOne({ _id: new mongodb.ObjectId(prodId) })
       .then(result => {
-        console.log("DELETED");
+        console.log("Deleted");
       })
       .catch(err => {
         console.log(err);
